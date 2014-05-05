@@ -14,5 +14,5 @@ about my IRC nick.
 Status
 ------
 
-Sunset time logic has been implemented, but the script itself is still non
-functional.
+Sunset time and moon phase calculation logic has been implemented, but the
+script itself is still non functional.

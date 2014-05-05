@@ -5,14 +5,12 @@
 # Copyright:: Copyright (C) William Osler
 # License::   MIT
 
-# Calculates the nautical sunset for a given location and date.
-
 require 'date'
 
 module Sunset
 
   # Get nautical sunset time for given date and latitude/longitude pair
-  def Sunset.sunsetFor(date, lat, long)
+  def Sunset.sunset_for(date, lat, long)
     day_of_year = date.yday
 
     # Longitude to hour value
@@ -75,7 +73,7 @@ module Sunset
     hour = local_set_time.floor
     minute = (local_set_time - hour) * 60
 
-    return Time.new(date.year, date.month, date.mday, hour, minute)
+    return DateTime.new(date.year, date.month, date.mday, hour, minute)
   end
 
 
