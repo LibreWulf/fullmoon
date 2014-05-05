@@ -3,9 +3,10 @@ Weechat Fullmoon Script
 
 This is a simple little script that performs certain actions based on the change
 of phases of the moon. More specifically, when the moon passes a certain
-threshold of "fullness", the script will perform an action such as sending a
-message to a channel and changing nick.  The moon phase data comes from (Weather
-Underground)[http://wunderground.com] and is copyright them.
+threshold of "fullness" and once it's dark out, the script will perform an
+action such as sending a message to a channel and changing nick. I was planning
+on using some web API to get sunrise/sunset times and moon illumination data,
+but I decided I could just do the calculations myself and save some bandwith.
 
 Not going to lie, this script exists solely because I wanted to make a joke
 about my IRC nick.
@@ -13,5 +14,5 @@ about my IRC nick.
 Status
 ======
 
-Nothing but a stub on Github yet, I just pushed a basic shell since to get an
-API key you need to give them a project URL. Actual script coming Soon(tm).
+Sunset time logic has been implemented, but the script itself is still non
+functional.

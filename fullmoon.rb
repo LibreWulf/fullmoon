@@ -8,16 +8,10 @@
 # Author: William Osler <{firstname}@{lastname}s.us>
 #
 
-require 'rubygems'
-require 'net/https'
-
 def weechat_init
   Weechat.register("fullmoon", "William Osler <{firstname}@{lastname}s.us>",
                    "0.1", "MIT", "Performs certain actions during a full moon",
                    "shutdown", "")
-
-  Weechat.print("", "Fullmoon script loaded. NOTE: Moon phase data comes " +
-                "from Weather Underground (http://wunderground.com) and is theirs.")
 
   return WEECHAT_RC_OK
 end
