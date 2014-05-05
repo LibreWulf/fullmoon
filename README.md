@@ -1,5 +1,5 @@
 Weechat Fullmoon Script
------------------------
+=======================
 
 This is a simple little script that performs certain actions based on the change
 of phases of the moon. More specifically, when the moon passes a certain
@@ -12,7 +12,7 @@ Not going to lie, this script exists solely because I wanted to make a joke
 about my IRC nick.
 
 Status
-======
+------
 
 Sunset time logic has been implemented, but the script itself is still non
 functional.
