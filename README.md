@@ -21,7 +21,7 @@ To unload, simply `/ruby unload fullmoon`.
 
 Commands
 --------
-*/moon*
+*/moon*  
 Shows the moon illumination percentage for a given date, or today if no date is
 specified.
 
