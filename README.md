@@ -11,8 +11,29 @@ but I decided I could just do the calculations myself and save some bandwith.
 Not going to lie, this script exists solely because I wanted to make a joke
 about my IRC nick.
 
+Installing
+----------
+1. Clone this into your ~/.weechat/ruby/ directory
+2. `rake`
+3. In Weechat, `/ruby load fullmoon/fullmoon.rb`
+
+To unload, simply `/ruby unload fullmoon`.
+
+Commands
+--------
+*/moon*
+Shows the moon illumination percentage for a given date, or today if no date is
+specified.
+
 Status
 ------
 
-Sunset time and moon phase calculation logic has been implemented, but the
-script itself is still non functional.
+Implemented:
+* Sunset time and moon phase calculation logic
+* Script registers with Weechat
+* Configurable settings
+* /moon command - shows the moon illumination for a given date
+
+Yet to come:
+* /sunrise and /sunset - show sunrise/set times for given date
+* Timing code that does things at sunset if sufficient moon illumination

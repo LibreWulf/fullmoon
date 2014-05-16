@@ -58,17 +58,18 @@ def config_cb(data, option, value)
 end
 
 def moon_command_cb(data, buffer, args)
-  if args.nil? || args.empty?
-    Weechat.print(buffer, "You must specify a date.")
-    return Weechat::WEECHAT_RC_OK
-  end
-
-  datestr = args.split(" ")[0]
 
   begin
-    day = Date.parse(datestr)
+    if args.nil? || args.empty?
+      day = Date.today
+    else
+      datestr = args.split(" ")[0]
+      day = Date.parse(datestr)
+    end
+
     illum = MoonPhase.moon_illumination_for(day) * 100
-    Weechat.print(buffer, "Illumination for #{day.iso8601}: #{illum}")
+    Weechat.print(buffer, "Illumination for #{day.iso8601}: #{illum}%")
+
   rescue ArgumentError => e
     if (e.message == "invalid date") then
       Weechat.print(buffer, "Invalid date.")
