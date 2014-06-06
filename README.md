@@ -25,6 +25,10 @@ Commands
 Shows the moon illumination percentage for a given date, or today if no date is
 specified.
 
+
+*/sunset*  
+Shows the time of sunset for a given date, or today if no date is specified.
+
 Status
 ------
 
@@ -33,7 +37,7 @@ Implemented:
 * Script registers with Weechat
 * Configurable settings
 * /moon command - shows the moon illumination for a given date
+* /sunset - show sunset times for given date
 
 Yet to come:
-* /sunrise and /sunset - show sunrise/set times for given date
 * Timing code that does things at sunset if sufficient moon illumination

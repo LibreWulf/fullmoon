@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 # Weechat Fullmoon script
 #
 # This is a simple ruby script for weechat that can perform certain actions when
@@ -31,11 +32,19 @@ def weechat_init
 
   # Our commands
   Weechat.hook_command("moon",
-                       "Returns the percentage of the moon illuminated on a given date",
+                       "Returns the percentage of the moon illuminated on a given date, or today if no date given",
                        "[date]",
                        "a valid ruby date like 2014-12-25",
                        "",
                        "moon_command_cb",
+                       "")
+
+  Weechat.hook_command("sunset",
+                       "Returns the sunset time of a given date or today if not date given",
+                       "[date]",
+                       "a valid ruby date like 2014-12-25",
+                       "",
+                       "sunset_command_cb",
                        "")
 
   return Weechat::WEECHAT_RC_OK
@@ -58,7 +67,6 @@ def config_cb(data, option, value)
 end
 
 def moon_command_cb(data, buffer, args)
-
   begin
     if args.nil? || args.empty?
       day = Date.today
@@ -70,6 +78,28 @@ def moon_command_cb(data, buffer, args)
     illum = MoonPhase.moon_illumination_for(day) * 100
     Weechat.print(buffer, "Illumination for #{day.iso8601}: #{illum}%")
 
+  rescue ArgumentError => e
+    if (e.message == "invalid date") then
+      Weechat.print(buffer, "Invalid date.")
+    else
+      raise e
+    end
+  end
+
+  return Weechat::WEECHAT_RC_OK
+end
+
+def sunset_command_cb(data, buffer, args)
+  begin
+    if args.nil? || args.empty?
+      day = Date.today
+    else
+      datestr = args.split(" ")[0]
+      day = Date.parse(datestr)
+    end
+
+    time = Sunset.sunset_for(day, $options[:latitude].to_i, $options[:longitude].to_i)
+    Weechat.print(buffer, "Sunset for #{day.iso8601}: #{time.hour}:#{time.min}")
   rescue ArgumentError => e
     if (e.message == "invalid date") then
       Weechat.print(buffer, "Invalid date.")

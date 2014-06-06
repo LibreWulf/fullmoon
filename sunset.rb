@@ -1,5 +1,7 @@
+# -*- encoding: utf-8 -*-
 # Calculates the civil sunset for a given location and date. Credit to the
-# algorithm found at http://williams.best.vwh.net/sunrise_sunset_algorithm.htm
+# algorithm found at
+# http://users.electromagnetic.net/bu/astro/sunrise-set.php
 #
 # Author::    William Osler (mailto:{firstname}@{lastname}s.us)
 # Copyright:: Copyright (C) William Osler
@@ -9,73 +11,47 @@ require 'date'
 
 module Sunset
 
-  # Get nautical sunset time for given date and latitude/longitude pair
+  # Get sunset time for given date and latitude/longitude pair
   def Sunset.sunset_for(date, lat, long)
-    day_of_year = date.yday
+    # This equation takes west longitude to be postive, contradicting the common notations
+    long *= -1
 
-    # Longitude to hour value
-    long_hour = long / 15.0
-    approx_time = day_of_year + ((18 - long_hour) / 24.0)
+    # Julian cycle
+    n = ((date.jd - 2451545 - 0.0009) - (long / 360.0)).round
 
-    # Sun's mean anomoly
-    sun_anom = (0.9856 * approx_time) - 3.289
+    #Approximate julian date of solar noon
+    j = 2451545 + 0.0009 + (long / 360.0) + n
 
-    # Sun's true longitude
-    sun_long = sun_anom + (1.916 * degree_sin(sun_anom)) +
-      (0.020 * degree_sin(sun_anom * 2)) + 282.634
+    # Mean solar anomaly
+    m = (357.5291 + 0.98560028 * (j - 2451545)) % 360
 
-    if (sun_long > 360) then
-      sun_long -= 360
-    elsif (sun_long <= 0)
-      sun_long += 360
-    end
+    # Equation of center
+    c = (1.9148 * degree_sin(m)) + (0.0200 * degree_sin(2 * m)) + (0.0003 * degree_sin(3 * m))
 
-    # Sun's right ascension
-    right_asc = degree_atan(0.91764 * degree_tan(sun_long))
-
-    if (right_asc > 360) then
-      right_asc -= 360
-    elsif (right_asc <= 0)
-      right_asc += 360
-    end
-
-    # Right ascenion to same quadrant as sun_long
-    long_quad = (sun_long / 90.0).floor * 90
-    asc_quad = (right_asc / 90.0).floor * 90
-    right_asc = right_asc + (long_quad - asc_quad)
-
-    # Right ascension to hours
-    right_asc /= 15
+    # Ecliptical longitude of the sun
+    λ = (m + 102.9372 + c + 180) % 360
 
     # Sun declination
-    sun_dec_sin = 0.39782 * degree_sin(sun_long)
-    sun_dec_cos = degree_cos(degree_asin(sun_dec_sin))
+    delta = degree_asin(degree_sin(λ) * degree_sin(23.45))
 
-    # Sun local hour angle
-    cos_hour_angle = (degree_cos(96) - (sun_dec_sin * degree_sin(lat))) /
-      (sun_dec_cos * degree_cos(lat))
+    # Hour angle
+    h = degree_acos((degree_sin(-0.83) - degree_sin(lat) * degree_sin(delta)) /
+                    (degree_cos(lat) * degree_cos(delta)))
 
-    if (cos_hour_angle < -1) then
-      return false # Sun doesn't set on this date
-    end
+    # Another approximation
+    approxj = 2451545 + 0.0009 + ((h + long) / 360.0) + n
 
-    hour_angle = degree_acos(cos_hour_angle) / 15
+    jset = approxj + (0.0053 * degree_sin(m)) - (0.0069 * degree_sin(2 * λ))
 
-    # Local mean time
-    local_set_time = hour_angle + right_asc - (0.06571 * approx_time) - 6.622
+    # Adjust for the fact that julian date is measured from 12pm
+    jset += 0.5
 
-    if (local_set_time >= 24) then
-      local_set_time -= 24
-    elsif (local_set_time < 0)
-      local_set_time += 24
-    end
+    setDate = Date.jd(jset)
+    sethr = (jset - jset.floor) * 24
+    setmin = (sethr - sethr.floor) * 60
 
-    hour = local_set_time.floor
-    minute = (local_set_time - hour) * 60
-
-    return DateTime.new(date.year, date.month, date.mday, hour, minute)
+    return Time.utc(setDate.year, setDate.month, setDate.day, sethr.floor, setmin.floor).localtime
   end
-
 
   # The rest of these are really simple math that could be done inline, but I
   # didn't want to risk complicating the actual calculation with conversions.

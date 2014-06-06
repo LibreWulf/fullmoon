@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 # Calculates the approximate illumination of the moon given a date. Large
 # portions of this code are "adapted" (stolen) from
 # http://bazaar.launchpad.net/~keturn/py-moon-phase/trunk/view/head:/moon.py
