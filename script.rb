@@ -99,7 +99,7 @@ def sunset_command_cb(data, buffer, args)
     end
 
     time = Sunset.sunset_for(day, $options[:latitude].to_i, $options[:longitude].to_i)
-    Weechat.print(buffer, "Sunset for #{day.iso8601}: #{time.hour}:#{time.min}")
+    Weechat.print(buffer, sprintf("Sunset for #{day.iso8601}: %.2d:%.2d", time.hour, time.min))
   rescue ArgumentError => e
     if (e.message == "invalid date") then
       Weechat.print(buffer, "Invalid date.")
