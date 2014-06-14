@@ -38,6 +38,9 @@ Implemented:
 * Configurable settings
 * /moon command - shows the moon illumination for a given date
 * /sunset - show sunset times for given date
-
-Yet to come:
 * Timing code that does things at sunset if sufficient moon illumination
+
+Yet to come:  
+I don't plan to actively work on this script much more since it works for my
+purposes, but if I were I'd probably implement a sunrise calculation that would
+change your nick back.

@@ -9,9 +9,9 @@
 
 $script_name = "fullmoon"
 
-$options = { latitude: '0', longitude: '0', moon_nick: "My2SpookyNick",
-  moon_trigger: '0.995', action: 'does a thing', channels:
-  "freenode.#foo,esper.#bar"}
+$options = { latitude: "0", longitude: "0", moon_nick: "My2SpookyNick",
+  moon_trigger: "0.995", action: "does a thing", channels:
+  "freenode.#foo,esper.#bar", enabled: "false"}
 
 def weechat_init
   Weechat.register($script_name, "William Osler <{firstname}@{lastname}s.us>",
@@ -46,6 +46,8 @@ def weechat_init
                        "",
                        "sunset_command_cb",
                        "")
+
+  start_timer
 
   return Weechat::WEECHAT_RC_OK
 end
@@ -98,7 +100,7 @@ def sunset_command_cb(data, buffer, args)
       day = Date.parse(datestr)
     end
 
-    time = Sunset.sunset_for(day, $options[:latitude].to_i, $options[:longitude].to_i)
+    time = Sunset.sunset_for(day, $options[:latitude].to_f, $options[:longitude].to_f)
     Weechat.print(buffer, sprintf("Sunset for #{day.iso8601}: %.2d:%.2d", time.hour, time.min))
   rescue ArgumentError => e
     if (e.message == "invalid date") then
@@ -109,4 +111,36 @@ def sunset_command_cb(data, buffer, args)
   end
 
   return Weechat::WEECHAT_RC_OK
+end
+
+def moon_action_cb(data, calls_left)
+  if $options[:enabled] == "true"
+    if (MoonPhase.moon_illumination_for(Date.today) > $options[:moon_trigger].to_f)
+      # Do our actions
+      $options[:channels].split(",").each do |channel|
+        buffer = Weechat.buffer_search("irc", channel)
+        if (buffer != "0x0" && buffer != "")
+            Weechat.command(buffer, "/nick " + $options[:moon_nick])
+            Weechat.command(buffer, "/me " + $options[:action])
+        end
+      end
+    end
+  end
+
+  # Restart the timer. This should be safe since the method will pick up that
+  # fact that it's past sunset and use tomorrow's date.
+  start_timer
+
+  return Weechat::WEECHAT_RC_OK
+end
+
+def start_timer
+  # Calculate time until action
+  set_time = Sunset.sunset_for(Date.today, $options[:latitude].to_f, $options[:longitude].to_f)
+  if (set_time - Time.now <= 0)
+    # Sun has already set, use sunset time for tomorrow
+    set_time = Sunset.sunset_for(Date.today + 1, $options[:latitude].to_f, $options[:longitude].to_f)
+  end
+
+  Weechat.hook_timer(((set_time - Time.now) * 1000).floor, 0, 1, "moon_action_cb", "")
 end
