@@ -44,3 +44,7 @@ Yet to come:
 I don't plan to actively work on this script much more since it works for my
 purposes, but if I were I'd probably implement a sunrise calculation that would
 change your nick back.
+
+License
+-------
+License is MIT, see LICENSE for details.
